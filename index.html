@@ -45,24 +45,13 @@
   .empty{padding:28px 16px;color:var(--ink3);text-align:center}
   mark{background:#FBF0C9;color:inherit;padding:0 1px;border-radius:2px}
 
-  /* builder / translate shared */
+  /* translate */
   .field{margin-bottom:16px}
   .field label{display:block;font-size:13px;color:var(--ink2);margin-bottom:6px}
-  .field select{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
-    background:var(--card);font-size:15px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .out{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
   .out .lbl{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
   .out .sent{font-family:Georgia,serif;font-size:26px;font-weight:500;line-height:1.4}
   .out .gloss{color:var(--ink2);margin-top:6px;font-style:italic;font-size:14px}
-  .badge{display:inline-block;font-size:12px;margin-top:14px;padding:3px 9px;border-radius:99px}
-  .badge.att{background:#E4F3EC;color:var(--accent)}
-  .badge.der{background:#F4ECD9;color:var(--amber)}
-  .note{font-size:12.5px;color:var(--ink3);margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-  .breakdown{margin-top:14px;font-size:13px;color:var(--ink2)}
-  .breakdown code{background:var(--chip);padding:1px 6px;border-radius:5px;font-size:12.5px}
-
-  /* translate tab */
   .row-btns{display:flex;gap:8px;margin-top:10px}
   .row-btns .catbtn{padding:9px 16px;font-size:14px}
   .primary{background:var(--ink);color:#fff;border-color:var(--ink);margin-left:auto}
@@ -71,7 +60,6 @@
   @media (max-width:480px){
     .wrap{padding:20px 14px 60px}
     header h1{font-size:25px}
-    .grid{grid-template-columns:1fr}
     .out{padding:16px}
     .out .sent{font-size:21px}
     .row{flex-wrap:wrap;gap:4px 14px}
@@ -86,60 +74,12 @@
   </header>
 
   <div class="tabs">
-    <button class="tab active" data-tab="build">Sentence builder</button>
-    <button class="tab" data-tab="translate">Translate</button>
+    <button class="tab active" data-tab="translate">Translate</button>
     <button class="tab" data-tab="dict">Dictionary</button>
   </div>
 
-  <!-- BUILDER -->
-  <section class="panel active" id="build">
-    <div class="grid">
-      <div class="field">
-        <label>Subject</label>
-        <select id="subj">
-          <option value="i">I — Naanu</option>
-          <option value="you">You — Neevu</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Tense</label>
-        <select id="tense">
-          <option value="presCont">Present continuous — "am / are doing"</option>
-          <option value="pastCont">Past continuous — "was / were doing"</option>
-          <option value="past">Past — "did"</option>
-          <option value="future">Future — "will do"</option>
-          <option value="ing">Just the "-ing" form</option>
-        </select>
-      </div>
-    </div>
-    <div class="grid">
-      <div class="field">
-        <label>Verb</label>
-        <select id="verb"></select>
-      </div>
-      <div class="field">
-        <label>Object (optional)</label>
-        <select id="obj"></select>
-      </div>
-    </div>
-
-    <div class="out">
-      <div class="lbl">Kannada</div>
-      <div class="sent" id="sent">—</div>
-      <div class="gloss" id="gloss"></div>
-      <div class="breakdown" id="breakdown"></div>
-      <div id="badge"></div>
-      <div class="note">
-        Continuous, future and “-ing” forms are assembled from the suffix rules in your notes
-        (<code>verb + utta + iddEne / idde</code>, etc.); past forms are stored per-verb.
-        <b>Attested</b> = this exact tense appears in your assignments. <b>By rule</b> = built from the
-        pattern; double-check spelling against a native speaker.
-      </div>
-    </div>
-  </section>
-
   <!-- TRANSLATE -->
-  <section class="panel" id="translate">
+  <section class="panel active" id="translate">
     <div class="field">
       <label>English</label>
       <textarea class="search" id="tIn" placeholder="Type a sentence… (e.g. I like biryani)"></textarea>
@@ -278,90 +218,6 @@ function render(){
 qEl.addEventListener("input",render);
 render();
 
-/* ---------- SENTENCE BUILDER ---------- */
-/* utta = the "-ing" stem; past forms stored explicitly. attested = tenses seen in your assignments. */
-const VERBS = [
-  {en:"do / work",  root:"maaDu",    utta:"maaDutta",   past:{i:"maaDide", you:"maaDidra"}, att:["presCont.i","presCont.you","pastCont.i","pastCont.you","past.i","past.you","future.i","future.you"]},
-  {en:"eat",        root:"tinnu",    utta:"tinnutta",   past:{i:"tinde",   you:"tindra"},   att:["presCont.i","presCont.you","pastCont.i","pastCont.you","past.i","past.you","future.i"]},
-  {en:"go",         root:"hoGu",     utta:"hogutta",    past:{i:"hogidde", you:"hogidra"},  att:["presCont.i","pastCont.i","past.i","future.i","future.you"]},
-  {en:"come",       root:"baru",     utta:"barutta",    past:{i:"bande",   you:"bandra"},   att:["presCont.i","pastCont.i","past.i","future.i"]},
-  {en:"see / watch",root:"noDu",     utta:"nodutta",    past:{i:"nodide",  you:"nodidra"},  att:["presCont.i","presCont.you","pastCont.i","pastCont.you","past.i","past.you","future.i","future.you"]},
-  {en:"drink",      root:"kuDi",     utta:"kuDiyutta",  past:{i:"kuDide",  you:"kuDidra"},  att:["presCont.i","pastCont.you","past.i","past.you","future.you"]},
-  {en:"sleep",      root:"malagu",   utta:"malagutta",  past:{i:"malagidde",you:"malagidra"},att:["future.i"]},
-  {en:"play",       root:"aadu",     utta:"aadutta",    past:{i:"aadide",  you:"aadidra"},  att:["future.you"]},
-  {en:"give",       root:"koDu",     utta:"kodiyutta",  past:{i:"kotte",   you:"kottra"},   att:["past.i","future.you"]},
-  {en:"take",       root:"tagoLu",   utta:"tagoLutta",  past:{i:"tagonde", you:"tagondra"}, att:["presCont.you","pastCont.you"]},
-  {en:"speak",      root:"maathaaDu",utta:"maathaadutta",past:{i:"maathaaDide",you:"mathadidra"},att:["presCont.you","pastCont.i","pastCont.you","past.you","future.you"]},
-  {en:"write",      root:"bare",     utta:"bareutta",   past:{i:"barede",  you:"baredra"},  att:["presCont.you","pastCont.you"]},
-  {en:"listen",     root:"keLu",     utta:"keLutta",    past:{i:"keLide",  you:"keLidra"},  att:["past.i"]},
-];
-
-const OBJECTS = [
-  ["— (no object)",""],["food (Oota)","Oota"],["work (keLsa)","keLsa"],
-  ["water (neeru)","neeru"],["milk (HaaLu)","HaaLu"],["a movie (cinema)","cinema"],
-];
-
-const SUBJ = {i:"Naanu", you:"Neevu"};
-const GLOSS = {
-  presCont:{i:"I am __ing", you:"You are __ing"},
-  pastCont:{i:"I was __ing", you:"You were __ing"},
-  past:{i:"I __ed", you:"You __ed"},
-  future:{i:"I will __", you:"You will __"},
-  ing:{i:"__ing", you:"__ing"},
-};
-
-const verbSel=document.getElementById("verb"), objSel=document.getElementById("obj");
-VERBS.forEach((v,i)=>{const o=document.createElement("option");o.value=i;o.textContent=v.en+"  ("+v.root+")";verbSel.appendChild(o);});
-OBJECTS.forEach((o,i)=>{const el=document.createElement("option");el.value=i;el.textContent=o[0];objSel.appendChild(el);});
-
-function conj(v, subj, tense){
-  // returns {form, attested}
-  const key=tense+"."+subj;
-  const attested=v.att.includes(key) || tense==="ing"; // ing is a documented root rule
-  const stem=v.utta;                     // e.g. maaDutta
-  const dropA=stem.slice(0,-1);          // maaDutt
-  let form;
-  switch(tense){
-    case "ing":      form=stem; break;
-    case "presCont": form=stem+(subj==="i"?" iddEne":" iddeera"); break;
-    case "pastCont": form=stem+(subj==="i"?" idde":" idra"); break;
-    case "future":   form=dropA+(subj==="i"?"Ene":"era"); break;
-    case "past":     form=v.past[subj]; break;
-  }
-  return {form, attested};
-}
-
-function build(){
-  const v=VERBS[+verbSel.value];
-  const subj=document.getElementById("subj").value;
-  const tense=document.getElementById("tense").value;
-  const obj=OBJECTS[+objSel.value][1];
-  const {form,attested}=conj(v,subj,tense);
-
-  const parts=[];
-  if(tense!=="ing") parts.push(SUBJ[subj]);
-  if(obj) parts.push(obj);
-  parts.push(form);
-  const sentence=parts.join(" ")+(tense==="ing"?"":".");
-
-  document.getElementById("sent").textContent=sentence;
-  document.getElementById("gloss").textContent=GLOSS[tense][subj].replace("__",v.en.split(" ")[0]);
-
-  // breakdown
-  let bd="";
-  if(tense==="ing") bd=`root <code>${v.root}</code> → <code>${v.utta}</code>`;
-  else if(tense==="past") bd=`<code>${SUBJ[subj]}</code> + past form <code>${form}</code>`;
-  else if(tense==="future") bd=`<code>${SUBJ[subj]}</code> + <code>${v.utta}</code> − a + <code>${subj==="i"?"Ene":"era"}</code>`;
-  else bd=`<code>${SUBJ[subj]}</code> + <code>${v.utta}</code> + <code>${form.split(" ").pop()}</code>`;
-  document.getElementById("breakdown").innerHTML=bd;
-
-  const badge=document.getElementById("badge");
-  badge.innerHTML = attested
-    ? '<span class="badge att">✓ Attested in your assignments</span>'
-    : '<span class="badge der">≈ Built by rule — verify spelling</span>';
-}
-["subj","tense","verb","obj"].forEach(id=>document.getElementById(id).addEventListener("change",build));
-
 /* ---------- TRANSLATE: dictionary-driven English → Kannada ---------- */
 function escapeRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}
 function normalize(s){return s.toLowerCase().replace(/[?.!,]/g,"").trim().replace(/\s+/g," ");}
@@ -477,10 +333,8 @@ document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
   document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
   t.classList.add("active");
   document.getElementById(t.dataset.tab).classList.add("active");
-  if(t.dataset.tab==="build") build();
 });
 
-build();
 runTranslate();
 </script>
 </body>
