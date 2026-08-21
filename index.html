@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English → Kannada</title>
+<style>
+  :root{
+    --page:#F5F4EE; --card:#fff; --ink:#2C2C2A; --ink2:#5F5E5A; --ink3:#888780;
+    --line:#D3D1C7; --accent:#1D9E75; --amber:#854F0B; --chip:#EEEDE5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;margin:0 auto;padding:32px 20px 80px}
+  header h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:30px;margin:0 0 4px}
+  header p{color:var(--ink2);margin:0 0 24px;font-style:italic}
+  .tabs{display:flex;gap:6px;margin-bottom:24px;border-bottom:1px solid var(--line)}
+  .tab{appearance:none;border:0;background:none;font:inherit;color:var(--ink3);
+    padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab.active{color:var(--ink);border-bottom-color:var(--accent);font-weight:500}
+  .panel{display:none} .panel.active{display:block}
+
+  /* shared */
+  input,select,textarea,button{font:inherit;color:var(--ink)}
+  .search{width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);font-size:16px;outline:none}
+  .search:focus{border-color:var(--accent)}
+  textarea.search{resize:vertical;min-height:70px;font-family:inherit}
+  .hint{color:var(--ink3);font-size:13px;margin:8px 2px 20px}
+
+  /* dictionary */
+  .cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+  .catbtn{appearance:none;border:1px solid var(--line);background:var(--card);font:inherit;
+    font-size:13px;color:var(--ink2);padding:5px 11px;border-radius:99px;cursor:pointer}
+  .catbtn.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .catbtn:disabled{opacity:.45;cursor:not-allowed}
+  .rows{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+  .row{display:flex;align-items:baseline;gap:14px;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .row .en{flex:1;color:var(--ink2)}
+  .row .ka{flex:1;font-weight:500}
+  .row .cat{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;min-width:74px;text-align:right}
+  .empty{padding:28px 16px;color:var(--ink3);text-align:center}
+  mark{background:#FBF0C9;color:inherit;padding:0 1px;border-radius:2px}
+
+  /* builder / translate shared */
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:13px;color:var(--ink2);margin-bottom:6px}
+  .field select{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);font-size:15px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .out{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
+  .out .lbl{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .out .sent{font-family:Georgia,serif;font-size:26px;font-weight:500;line-height:1.4}
+  .out .gloss{color:var(--ink2);margin-top:6px;font-style:italic;font-size:14px}
+  .badge{display:inline-block;font-size:12px;margin-top:14px;padding:3px 9px;border-radius:99px}
+  .badge.att{background:#E4F3EC;color:var(--accent)}
+  .badge.der{background:#F4ECD9;color:var(--amber)}
+  .note{font-size:12.5px;color:var(--ink3);margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .breakdown{margin-top:14px;font-size:13px;color:var(--ink2)}
+  .breakdown code{background:var(--chip);padding:1px 6px;border-radius:5px;font-size:12.5px}
+
+  /* translate tab */
+  .row-btns{display:flex;gap:8px;margin-top:10px}
+  .row-btns .catbtn{padding:9px 16px;font-size:14px}
+  .primary{background:var(--ink);color:#fff;border-color:var(--ink);margin-left:auto}
+  .listening{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important}
+  .unk{font-style:italic;color:var(--ink3);border-bottom:1px dotted var(--ink3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>English → Kannada</h1>
+    <p>Type it or speak it. Romanized Kannada, built from your own notes.</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="translate">Translate</button>
+    <button class="tab" data-tab="dict">Dictionary</button>
+    <button class="tab" data-tab="build">Sentence builder</button>
+  </div>
+
+  <!-- TRANSLATE -->
+  <section class="panel active" id="translate">
+    <div class="field">
+      <label>English</label>
+      <textarea class="search" id="tIn" placeholder="Type or speak a sentence… (e.g. I like biryani)"></textarea>
+      <div class="row-btns">
+        <button class="catbtn" id="micBtn" type="button">🎤 Speak</button>
+        <button class="catbtn primary" id="tGo" type="button">Translate →</button>
+      </div>
+    </div>
+
+    <div class="out">
+      <div class="lbl">Kannada</div>
+      <div class="sent" id="tOut">—</div>
+      <div class="gloss" id="tMeta"></div>
+      <div class="row-btns" style="margin-top:16px">
+        <button class="catbtn" id="speakBtn" type="button">🔊 Listen</button>
+      </div>
+      <div class="note">
+        Checks your saved phrases first, then sentence frames (<code>I like ___</code>,
+        <code>I want ___</code>, <code>I have ___</code>, <code>give me ___</code>…), then falls back to
+        word-by-word from your dictionary. Words in <span class="unk">grey, dotted-underline</span> italics
+        aren't in your notes yet and are left in English. Voice input needs a Chrome-based browser; voice
+        output reads the romanized text aloud with whatever voice your device has — true Kannada voices are
+        rare, so treat pronunciation as approximate.
+      </div>
+    </div>
+  </section>
+
+  <!-- DICTIONARY -->
+  <section class="panel" id="dict">
+    <input class="search" id="q" placeholder="Type English or Kannada… (e.g. thanks, naanu, water)" autocomplete="off">
+    <div class="hint">Searches both directions. Nothing shown = the word isn't in your notes yet.</div>
+    <div class="cats" id="cats"></div>
+    <div class="rows" id="rows"></div>
+  </section>
+
+  <!-- BUILDER -->
+  <section class="panel" id="build">
+    <div class="grid">
+      <div class="field">
+        <label>Subject</label>
+        <select id="subj">
+          <option value="i">I — Naanu</option>
+          <option value="you">You — Neevu</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tense</label>
+        <select id="tense">
+          <option value="presCont">Present continuous — "am / are doing"</option>
+          <option value="pastCont">Past continuous — "was / were doing"</option>
+          <option value="past">Past — "did"</option>
+          <option value="future">Future — "will do"</option>
+          <option value="ing">Just the "-ing" form</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label>Verb</label>
+        <select id="verb"></select>
+      </div>
+      <div class="field">
+        <label>Object (optional)</label>
+        <select id="obj"></select>
+      </div>
+    </div>
+
+    <div class="out">
+      <div class="lbl">Kannada</div>
+      <div class="sent" id="sent">—</div>
+      <div class="gloss" id="gloss"></div>
+      <div class="breakdown" id="breakdown"></div>
+      <div id="badge"></div>
+      <div class="note">
+        Continuous, future and “-ing” forms are assembled from the suffix rules in your notes
+        (<code>verb + utta + iddEne / idde</code>, etc.); past forms are stored per-verb.
+        <b>Attested</b> = this exact tense appears in your assignments. <b>By rule</b> = built from the
+        pattern; double-check spelling against a native speaker.
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ---------- DICTIONARY DATA (straight from your notes) ---------- */
+const DICT = [
+  // greetings
+  ["Hello","namaskaara","greetings"],["Good morning","shubhodaya","greetings"],
+  ["Good night","Shubha raatri","greetings"],["Thanks","dhanyavaadagaLu","greetings"],
+  ["Thank you","dhanyavaada","greetings"],["Wishes","ShubhaashayagaLu","greetings"],
+  ["Congratulations","AbhinandanegaLu","greetings"],["Take care","hushaaru","greetings"],
+  // pronouns & cases
+  ["I / me","naanu","pronoun"],["My","nanna","pronoun"],["Mine","nannadu","pronoun"],
+  ["To me","nanage / nange","pronoun"],["From me","nanninda","pronoun"],
+  ["With me","nannalli","pronoun"],["For me","nanagaagi","pronoun"],
+  ["We / us","naavu","pronoun"],["Our","namma","pronoun"],["Ours","nammadu","pronoun"],
+  ["To us","namage","pronoun"],["From us","namminda","pronoun"],["With us","nammalli","pronoun"],
+  ["You","neenu / neevu (plural)","pronoun"],["Your","ninna / nimma","pronoun"],
+  ["Yours","ninnadu / nimmadu","pronoun"],["To you","ninage / nimage (plural)","pronoun"],
+  ["With you","ninnalli / nimmalli","pronoun"],
+  ["He","Avanu","pronoun"],["She","AvaLu","pronoun"],["His","avana","pronoun"],
+  ["Her","avaLa","pronoun"],["They","avaru","pronoun"],["Their","avara","pronoun"],
+  ["Them","avarige","pronoun"],["This / It","Idu","pronoun"],["That","Adu","pronoun"],
+  // time
+  ["Today","Ivattu","time"],["Tomorrow","NaaLe","time"],["Yesterday","nenne","time"],
+  ["Day after","naaLiddu","time"],["Day before","monne","time"],["Time","gante / samaya","time"],
+  ["Morning","beLigge","time"],["Afternoon","madhyana","time"],["Evening","sanje","time"],
+  // common words
+  ["Give","koDi","word"],["Do","madi","word"],["Go","hoGi","word"],["Come","Banni","word"],
+  ["Meal / food","Oota","word"],["Done?","Aaita? / Aitu","word"],["Breakfast","Tindi","word"],
+  ["Vegetables","Tarkari / TarkarigaLu","word"],["Milk","HaaLu","word"],
+  ["Sweet","SeeHi","word"],["Sweet dish","SeeHi Tindi","word"],["Shirt","anGI","word"],
+  ["Rain","maLe","word"],["Near","Hattira","word"],["Far","Doora","word"],
+  ["Water","neeru / neeRa","word"],["Pen","pen","word"],
+  ["I want","nanage bEku","word"],["Don't want","bEDa","word"],
+  ["Like / love","ishta","word"],["Don't like","ishtilla","word"],
+  ["-s (make plural)","…gaLu","word"],["is / there is (hai)","ide","word"],
+  ["How much","eshTu","word"],
+  // numbers
+  ["10","hattu","number"],["20","ipattu","number"],["30","moovattu","number"],
+  ["40","naalvattu","number"],["50","aivattu","number"],["60","aravattu","number"],
+  ["70","epattu","number"],["80","embattu","number"],["90","tombattu","number"],
+  ["100","nooru","number"],["1000","saavira","number"],["2000","eradu saavira","number"],
+  // directions
+  ["Left","eDa","direction"],["Right","Bala","direction"],["Straight","nEra","direction"],
+  ["Back","hinde","direction"],["Front","munde","direction"],["Up / above","mEle","direction"],
+  ["Down / below","keLage","direction"],["There","alli","direction"],["Here","illi","direction"],
+  ["Left side","eDa-Gade","direction"],["Right side","Bala-Gade","direction"],
+  ["That side","aa kaDe","direction"],["This side","ee kaDe","direction"],
+  // questions
+  ["How","hEge","question"],["What","Enu","question"],["Where","elli","question"],
+  ["When","yaavaga","question"],["Why","yaake","question"],["Which","yaava","question"],
+  ["Who","yaaru","question"],["Whose","yaara","question"],["Whom","yaarana","question"],
+  // verbs (roots)
+  ["Sing","HaaDu","verb"],["Play","Aadu","verb"],["Give (root)","KoDu","verb"],
+  ["Take","Tego / tago","verb"],["Drink","KuDi","verb"],["Walk","Nadi","verb"],
+  ["Eat","Tina","verb"],["Do (root)","MaaDu","verb"],["Speak","MaathaaDu","verb"],
+  ["Listen","KeLu","verb"],["Jump","HaaRu","verb"],["Dance","KuNi","verb"],
+  ["Bother","KaaDu","verb"],["See","noDu","verb"],["Sleep","Malagu","verb"],
+  ["Wake up","ELu","verb"],["Close","Muchchu","verb"],["Open","Tere","verb"],
+  ["Write","Bare / Bari","verb"],["Call / Invite","Kari","verb"],
+];
+
+/* phrases live in the dictionary too, under 'phrase' */
+const PHRASES = [
+  ["What is your name? (respect)","Nimma hesaru yenu?"],
+  ["My name is Chinmay","Nanna hesaru Chinmay"],
+  ["Who are you?","Neevu yaaru?"],
+  ["Did you finish food?","Oota aita?"],
+  ["Did you have lunch?","Oota maaDidra?"],
+  ["How are you? (respect)","Neevu hEge iddeera?"],
+  ["Where are you?","Neevu elli iddeera?"],
+  ["When are you coming?","Neevu yaavaga barutta iddeera?"],
+  ["Whom should I ask?","Yaarana keLabeku?"],
+  ["I work at Talentica","Naanu Talentica dalli keLsa maaDuttEne"],
+  ["Where do you work?","Neevu elli keLsa maaDutteera?"],
+  ["There is a pen (over there)","Alli onDu pen ide"],
+  ["I have a pen","Nanna hattira onDu pen ide"],
+];
+PHRASES.forEach(p=>DICT.push([p[0],p[1],"phrase"]));
+
+const CATS = ["all","greetings","pronoun","time","word","number","direction","question","verb","phrase"];
+const CATLABEL = {all:"All",greetings:"Greetings",pronoun:"Pronouns",time:"Time",word:"Common",
+  number:"Numbers",direction:"Directions",question:"Questions",verb:"Verbs",phrase:"Phrases"};
+
+/* ---------- DICTIONARY UI ---------- */
+let activeCat="all";
+const qEl=document.getElementById("q"), rowsEl=document.getElementById("rows"), catsEl=document.getElementById("cats");
+
+CATS.forEach(c=>{
+  const b=document.createElement("button");
+  b.className="catbtn"+(c==="all"?" active":""); b.textContent=CATLABEL[c];
+  b.onclick=()=>{activeCat=c;[...catsEl.children].forEach(x=>x.classList.remove("active"));b.classList.add("active");render();};
+  catsEl.appendChild(b);
+});
+
+function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function hl(text,q){ if(!q) return esc(text);
+  const i=text.toLowerCase().indexOf(q.toLowerCase());
+  if(i<0) return esc(text);
+  return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length));
+}
+function render(){
+  const q=qEl.value.trim().toLowerCase();
+  let list=DICT.filter(([en,ka,cat])=>{
+    if(activeCat!=="all" && cat!==activeCat) return false;
+    if(!q) return true;
+    return en.toLowerCase().includes(q)||ka.toLowerCase().includes(q);
+  });
+  if(!list.length){ rowsEl.innerHTML='<div class="empty">Not in your notes yet.</div>'; return; }
+  rowsEl.innerHTML=list.map(([en,ka,cat])=>
+    `<div class="row"><span class="en">${hl(en,q)}</span><span class="ka">${hl(ka,q)}</span><span class="cat">${CATLABEL[cat]}</span></div>`
+  ).join("");
+}
+qEl.addEventListener("input",render);
+render();
+
+/* ---------- SENTENCE BUILDER ---------- */
+/* utta = the "-ing" stem; past forms stored explicitly. attested = tenses seen in your assignments. */
+const VERBS = [
+  {en:"do / work",  root:"maaDu",    utta:"maaDutta",   past:{i:"maaDide", you:"maaDidra"}, att:["presCont.i","presCont.you","pastCont.i","pastCont.you","past.i","past.you","future.i","future.you"]},
+  {en:"eat",        root:"tinnu",    utta:"tinnutta",   past:{i:"tinde",   you:"tindra"},   att:["presCont.i","presCont.you","pastCont.i","pastCont.you","past.i","past.you","future.i"]},
+  {en:"go",         root:"hoGu",     utta:"hogutta",    past:{i:"hogidde", you:"hogidra"},  att:["presCont.i","pastCont.i","past.i","future.i","future.you"]},
+  {en:"come",       root:"baru",     utta:"barutta",    past:{i:"bande",   you:"bandra"},   att:["presCont.i","pastCont.i","past.i","future.i"]},
+  {en:"see / watch",root:"noDu",     utta:"nodutta",    past:{i:"nodide",  you:"nodidra"},  att:["presCont.i","presCont.you","pastCont.i","pastCont.you","past.i","past.you","future.i","future.you"]},
+  {en:"drink",      root:"kuDi",     utta:"kuDiyutta",  past:{i:"kuDide",  you:"kuDidra"},  att:["presCont.i","pastCont.you","past.i","past.you","future.you"]},
+  {en:"sleep",      root:"malagu",   utta:"malagutta",  past:{i:"malagidde",you:"malagidra"},att:["future.i"]},
+  {en:"play",       root:"aadu",     utta:"aadutta",    past:{i:"aadide",  you:"aadidra"},  att:["future.you"]},
+  {en:"give",       root:"koDu",     utta:"kodiyutta",  past:{i:"kotte",   you:"kottra"},   att:["past.i","future.you"]},
+  {en:"take",       root:"tagoLu",   utta:"tagoLutta",  past:{i:"tagonde", you:"tagondra"}, att:["presCont.you","pastCont.you"]},
+  {en:"speak",      root:"maathaaDu",utta:"maathaadutta",past:{i:"maathaaDide",you:"mathadidra"},att:["presCont.you","pastCont.i","pastCont.you","past.you","future.you"]},
+  {en:"write",      root:"bare",     utta:"bareutta",   past:{i:"barede",  you:"baredra"},  att:["presCont.you","pastCont.you"]},
+  {en:"listen",     root:"keLu",     utta:"keLutta",    past:{i:"keLide",  you:"keLidra"},  att:["past.i"]},
+];
+
+const OBJECTS = [
+  ["— (no object)",""],["food (Oota)","Oota"],["work (keLsa)","keLsa"],
+  ["water (neeru)","neeru"],["milk (HaaLu)","HaaLu"],["a movie (cinema)","cinema"],
+];
+
+const SUBJ = {i:"Naanu", you:"Neevu"};
+const GLOSS = {
+  presCont:{i:"I am __ing", you:"You are __ing"},
+  pastCont:{i:"I was __ing", you:"You were __ing"},
+  past:{i:"I __ed", you:"You __ed"},
+  future:{i:"I will __", you:"You will __"},
+  ing:{i:"__ing", you:"__ing"},
+};
+
+const verbSel=document.getElementById("verb"), objSel=document.getElementById("obj");
+VERBS.forEach((v,i)=>{const o=document.createElement("option");o.value=i;o.textContent=v.en+"  ("+v.root+")";verbSel.appendChild(o);});
+OBJECTS.forEach((o,i)=>{const el=document.createElement("option");el.value=i;el.textContent=o[0];objSel.appendChild(el);});
+
+function conj(v, subj, tense){
+  // returns {form, attested}
+  const key=tense+"."+subj;
+  const attested=v.att.includes(key) || tense==="ing"; // ing is a documented root rule
+  const stem=v.utta;                     // e.g. maaDutta
+  const dropA=stem.slice(0,-1);          // maaDutt
+  let form;
+  switch(tense){
+    case "ing":      form=stem; break;
+    case "presCont": form=stem+(subj==="i"?" iddEne":" iddeera"); break;
+    case "pastCont": form=stem+(subj==="i"?" idde":" idra"); break;
+    case "future":   form=dropA+(subj==="i"?"Ene":"era"); break;
+    case "past":     form=v.past[subj]; break;
+  }
+  return {form, attested};
+}
+
+function build(){
+  const v=VERBS[+verbSel.value];
+  const subj=document.getElementById("subj").value;
+  const tense=document.getElementById("tense").value;
+  const obj=OBJECTS[+objSel.value][1];
+  const {form,attested}=conj(v,subj,tense);
+
+  const parts=[];
+  if(tense!=="ing") parts.push(SUBJ[subj]);
+  if(obj) parts.push(obj);
+  parts.push(form);
+  const sentence=parts.join(" ")+(tense==="ing"?"":".");
+
+  document.getElementById("sent").textContent=sentence;
+  document.getElementById("gloss").textContent=GLOSS[tense][subj].replace("__",v.en.split(" ")[0]);
+
+  // breakdown
+  let bd="";
+  if(tense==="ing") bd=`root <code>${v.root}</code> → <code>${v.utta}</code>`;
+  else if(tense==="past") bd=`<code>${SUBJ[subj]}</code> + past form <code>${form}</code>`;
+  else if(tense==="future") bd=`<code>${SUBJ[subj]}</code> + <code>${v.utta}</code> − a + <code>${subj==="i"?"Ene":"era"}</code>`;
+  else bd=`<code>${SUBJ[subj]}</code> + <code>${v.utta}</code> + <code>${form.split(" ").pop()}</code>`;
+  document.getElementById("breakdown").innerHTML=bd;
+
+  const badge=document.getElementById("badge");
+  badge.innerHTML = attested
+    ? '<span class="badge att">✓ Attested in your assignments</span>'
+    : '<span class="badge der">≈ Built by rule — verify spelling</span>';
+}
+["subj","tense","verb","obj"].forEach(id=>document.getElementById(id).addEventListener("change",build));
+
+/* ---------- TRANSLATE: dictionary-driven English → Kannada ---------- */
+function escapeRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}
+function normalize(s){return s.toLowerCase().replace(/[?.!,]/g,"").trim().replace(/\s+/g," ");}
+
+// Build a single-word lookup and a multi-word phrase list from every
+// non-phrase DICT entry (splitting "a / b" synonym groups on each side).
+const WORD_MAP = new Map();
+const PHRASE_LIST = [];
+DICT.forEach(([en,ka,cat])=>{
+  if(cat==="phrase") return;
+  const kaFirst = ka.split("/")[0].replace(/\(.*?\)/g,"").trim();
+  if(!kaFirst) return;
+  en.split("/").forEach(rawVariant=>{
+    const clean = rawVariant.replace(/\(.*?\)/g,"").trim();
+    if(!clean || clean.startsWith("-")) return;
+    if(clean.includes(" ")){
+      PHRASE_LIST.push({en:clean.toLowerCase(), ka:kaFirst});
+    } else if(!WORD_MAP.has(clean.toLowerCase())){
+      WORD_MAP.set(clean.toLowerCase(), kaFirst);
+    }
+  });
+});
+PHRASE_LIST.sort((a,b)=> b.en.split(" ").length - a.en.split(" ").length || b.en.length - a.en.length);
+
+const PHRASE_LOOKUP = new Map(PHRASES.map(([en,ka])=>[normalize(en), ka]));
+
+// word/phrase substitution used both for the fallback tier and for filling
+// in the "___" slot of a sentence frame.
+function wordByWord(text){
+  const store=[];
+  let working = text;
+  PHRASE_LIST.forEach(({en,ka})=>{
+    const re = new RegExp("\\b"+escapeRe(en)+"\\b","gi");
+    working = working.replace(re, ()=>{ store.push(ka); return `@@${store.length-1}@@`; });
+  });
+  const tokens = working.split(/(\s+)/);
+  let unknownCount=0;
+  const htmlParts=[], plainParts=[];
+  tokens.forEach(tok=>{
+    if(tok==="") return;
+    if(/^\s+$/.test(tok)){ htmlParts.push(tok); plainParts.push(tok); return; }
+    const ph = tok.match(/^@@(\d+)@@([.,!?;:]*)$/);
+    if(ph){ const ka=store[+ph[1]]; htmlParts.push(esc(ka)+ph[2]); plainParts.push(ka+ph[2]); return; }
+    const m = tok.match(/^([A-Za-z']+)([.,!?;:]*)$/);
+    if(!m){ htmlParts.push(esc(tok)); plainParts.push(tok); return; }
+    const [,word,punct]=m;
+    const lw=word.toLowerCase();
+    if(WORD_MAP.has(lw)){
+      const ka=WORD_MAP.get(lw);
+      htmlParts.push(esc(ka)+punct); plainParts.push(ka+punct);
+    } else {
+      unknownCount++;
+      htmlParts.push(`<span class="unk" title="Not in dictionary — kept as English">${esc(word)}</span>${punct}`);
+      plainParts.push(word+punct);
+    }
+  });
+  return {html:htmlParts.join(""), plain:plainParts.join(""), unknownCount};
+}
+
+// documented sentence frames — grammar from the "Sentence frames" notes
+const FRAMES = [
+  {re:/^i\s+don'?t\s+like\s+(.+?)[.!]?$/i,        tmpl:o=>[`Nanage ${o.html} ishtilla`, `Nanage ${o.plain} ishtilla`]},
+  {re:/^i\s+don'?t\s+want\s+(.+?)[.!]?$/i,        tmpl:o=>[`Nanage ${o.html} bEDa`, `Nanage ${o.plain} bEDa`]},
+  {re:/^i\s+like\s+(.+?)[.!]?$/i,                 tmpl:o=>[`Nanage ${o.html} ishta`, `Nanage ${o.plain} ishta`]},
+  {re:/^i\s+want\s+(.+?)[.!]?$/i,                 tmpl:o=>[`Nanage ${o.html} bEku`, `Nanage ${o.plain} bEku`]},
+  {re:/^i\s+have\s+(?:a\s+|an\s+|one\s+)?(.+?)[.!]?$/i, tmpl:o=>[`Nanna hattira onDu ${o.html} ide`, `Nanna hattira onDu ${o.plain} ide`]},
+  {re:/^(?:there\s+is|there's)\s+(?:a\s+|an\s+|one\s+)?(.+?)[.!]?$/i, tmpl:o=>[`Alli onDu ${o.html} ide`, `Alli onDu ${o.plain} ide`]},
+  {re:/^give\s+me\s+(.+?)[.!]?$/i,                tmpl:o=>[`Nanage ${o.html} koDi`, `Nanage ${o.plain} koDi`]},
+  {re:/^my\s+name\s+is\s+(.+?)[.!]?$/i,           tmpl:o=>[`Nanna hesaru ${o.html}`, `Nanna hesaru ${o.plain}`]},
+  {re:/^i\s+work\s+(?:in|at)\s+(.+?)[.!]?$/i,     tmpl:o=>[`Naanu ${o.html}-alli keLsa maaDuttEne`, `Naanu ${o.plain}-alli keLsa maaDuttEne`]},
+  {re:/^we\s+don'?t\s+like\s+(.+?)[.!]?$/i,       tmpl:o=>[`Namage ${o.html} ishtilla`, `Namage ${o.plain} ishtilla`]},
+  {re:/^we\s+like\s+(.+?)[.!]?$/i,                tmpl:o=>[`Namage ${o.html} ishta`, `Namage ${o.plain} ishta`]},
+  {re:/^we\s+want\s+(.+?)[.!]?$/i,                tmpl:o=>[`Namage ${o.html} bEku`, `Namage ${o.plain} bEku`]},
+  {re:/^you\s+don'?t\s+want\s+(.+?)[.!]?$/i,      tmpl:o=>[`Nimage ${o.html} bEDa`, `Nimage ${o.plain} bEDa`]},
+  {re:/^you\s+want\s+(.+?)[.!]?$/i,               tmpl:o=>[`Nimage ${o.html} bEku`, `Nimage ${o.plain} bEku`]},
+];
+
+function translateSentence(input){
+  const trimmed = input.trim();
+  if(!trimmed) return null;
+  const norm = normalize(trimmed);
+  if(PHRASE_LOOKUP.has(norm)){
+    const ka = PHRASE_LOOKUP.get(norm);
+    return {html:esc(ka), plain:ka, mode:"Matched a saved phrase", unknownCount:0};
+  }
+  for(const f of FRAMES){
+    const m = trimmed.match(f.re);
+    if(m){
+      const obj = wordByWord(m[1].trim());
+      const [html, plain] = f.tmpl(obj);
+      return {html, plain, mode:"Built from a sentence frame", unknownCount:obj.unknownCount};
+    }
+  }
+  const res = wordByWord(trimmed);
+  return {html:res.html, plain:res.plain, mode:"Word-by-word from your dictionary", unknownCount:res.unknownCount};
+}
+
+const tIn=document.getElementById("tIn"), tOut=document.getElementById("tOut"), tMeta=document.getElementById("tMeta");
+const tGo=document.getElementById("tGo"), micBtn=document.getElementById("micBtn"), speakBtn=document.getElementById("speakBtn");
+let lastPlain="";
+
+function runTranslate(){
+  const res = translateSentence(tIn.value);
+  if(!res){ tOut.innerHTML="—"; tMeta.textContent=""; lastPlain=""; return; }
+  tOut.innerHTML = res.html;
+  lastPlain = res.plain;
+  tMeta.textContent = res.mode + (res.unknownCount ? ` · ${res.unknownCount} word${res.unknownCount>1?"s":""} not in dictionary` : "");
+}
+tGo.addEventListener("click", runTranslate);
+tIn.addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); runTranslate(); } });
+
+/* ---------- VOICE INPUT (speech-to-text) ---------- */
+const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+if(SpeechRecognitionImpl){
+  recognition = new SpeechRecognitionImpl();
+  recognition.lang = "en-IN";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.onresult = e=>{ tIn.value = e.results[0][0].transcript; runTranslate(); };
+  recognition.onend = ()=>{ micBtn.classList.remove("listening"); micBtn.textContent="🎤 Speak"; };
+  recognition.onerror = ()=>{ micBtn.classList.remove("listening"); micBtn.textContent="🎤 Speak"; };
+  micBtn.addEventListener("click", ()=>{
+    micBtn.classList.add("listening");
+    micBtn.textContent="● Listening…";
+    recognition.start();
+  });
+} else {
+  micBtn.disabled = true;
+  micBtn.title = "Voice input isn't supported in this browser — try Chrome on desktop or Android.";
+}
+
+/* ---------- VOICE OUTPUT (text-to-speech) ---------- */
+const synth = window.speechSynthesis;
+if(synth){
+  speakBtn.addEventListener("click", ()=>{
+    if(!lastPlain) return;
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(lastPlain);
+    const voices = synth.getVoices();
+    const pref = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("kn"))
+      || voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("hi"))
+      || voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("en-in"))
+      || null;
+    if(pref) u.voice = pref;
+    u.rate = 0.9;
+    synth.speak(u);
+  });
+} else {
+  speakBtn.disabled = true;
+  speakBtn.title = "Speech output isn't supported in this browser.";
+}
+
+/* ---------- TABS ---------- */
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active");
+  document.getElementById(t.dataset.tab).classList.add("active");
+  if(t.dataset.tab==="build") build();
+});
+
+build();
+runTranslate();
+</script>
+</body>
+</html>
