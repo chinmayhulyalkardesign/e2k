@@ -66,62 +66,33 @@
   .row-btns{display:flex;gap:8px;margin-top:10px}
   .row-btns .catbtn{padding:9px 16px;font-size:14px}
   .primary{background:var(--ink);color:#fff;border-color:var(--ink);margin-left:auto}
-  .listening{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important}
   .unk{font-style:italic;color:var(--ink3);border-bottom:1px dotted var(--ink3)}
+
+  @media (max-width:480px){
+    .wrap{padding:20px 14px 60px}
+    header h1{font-size:25px}
+    .grid{grid-template-columns:1fr}
+    .out{padding:16px}
+    .out .sent{font-size:21px}
+    .row{flex-wrap:wrap;gap:4px 14px}
+    .row .cat{min-width:0;text-align:left;flex-basis:100%}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>English → Kannada</h1>
-    <p>Type it or speak it. Romanized Kannada, built from your own notes.</p>
   </header>
 
   <div class="tabs">
-    <button class="tab active" data-tab="translate">Translate</button>
+    <button class="tab active" data-tab="build">Sentence builder</button>
+    <button class="tab" data-tab="translate">Translate</button>
     <button class="tab" data-tab="dict">Dictionary</button>
-    <button class="tab" data-tab="build">Sentence builder</button>
   </div>
 
-  <!-- TRANSLATE -->
-  <section class="panel active" id="translate">
-    <div class="field">
-      <label>English</label>
-      <textarea class="search" id="tIn" placeholder="Type or speak a sentence… (e.g. I like biryani)"></textarea>
-      <div class="row-btns">
-        <button class="catbtn" id="micBtn" type="button">🎤 Speak</button>
-        <button class="catbtn primary" id="tGo" type="button">Translate →</button>
-      </div>
-    </div>
-
-    <div class="out">
-      <div class="lbl">Kannada</div>
-      <div class="sent" id="tOut">—</div>
-      <div class="gloss" id="tMeta"></div>
-      <div class="row-btns" style="margin-top:16px">
-        <button class="catbtn" id="speakBtn" type="button">🔊 Listen</button>
-      </div>
-      <div class="note">
-        Checks your saved phrases first, then sentence frames (<code>I like ___</code>,
-        <code>I want ___</code>, <code>I have ___</code>, <code>give me ___</code>…), then falls back to
-        word-by-word from your dictionary. Words in <span class="unk">grey, dotted-underline</span> italics
-        aren't in your notes yet and are left in English. Voice input needs a Chrome-based browser; voice
-        output reads the romanized text aloud with whatever voice your device has — true Kannada voices are
-        rare, so treat pronunciation as approximate.
-      </div>
-    </div>
-  </section>
-
-  <!-- DICTIONARY -->
-  <section class="panel" id="dict">
-    <input class="search" id="q" placeholder="Type English or Kannada… (e.g. thanks, naanu, water)" autocomplete="off">
-    <div class="hint">Searches both directions. Nothing shown = the word isn't in your notes yet.</div>
-    <div class="cats" id="cats"></div>
-    <div class="rows" id="rows"></div>
-  </section>
-
   <!-- BUILDER -->
-  <section class="panel" id="build">
+  <section class="panel active" id="build">
     <div class="grid">
       <div class="field">
         <label>Subject</label>
@@ -165,6 +136,31 @@
         pattern; double-check spelling against a native speaker.
       </div>
     </div>
+  </section>
+
+  <!-- TRANSLATE -->
+  <section class="panel" id="translate">
+    <div class="field">
+      <label>English</label>
+      <textarea class="search" id="tIn" placeholder="Type a sentence… (e.g. I like biryani)"></textarea>
+      <div class="row-btns">
+        <button class="catbtn primary" id="tGo" type="button">Translate →</button>
+      </div>
+    </div>
+
+    <div class="out">
+      <div class="lbl">Kannada</div>
+      <div class="sent" id="tOut">—</div>
+      <div class="gloss" id="tMeta"></div>
+    </div>
+  </section>
+
+  <!-- DICTIONARY -->
+  <section class="panel" id="dict">
+    <input class="search" id="q" placeholder="Type English or Kannada… (e.g. thanks, naanu, water)" autocomplete="off">
+    <div class="hint">Searches both directions. Nothing shown = the word isn't in your notes yet.</div>
+    <div class="cats" id="cats"></div>
+    <div class="rows" id="rows"></div>
   </section>
 </div>
 
@@ -464,60 +460,16 @@ function translateSentence(input){
 }
 
 const tIn=document.getElementById("tIn"), tOut=document.getElementById("tOut"), tMeta=document.getElementById("tMeta");
-const tGo=document.getElementById("tGo"), micBtn=document.getElementById("micBtn"), speakBtn=document.getElementById("speakBtn");
-let lastPlain="";
+const tGo=document.getElementById("tGo");
 
 function runTranslate(){
   const res = translateSentence(tIn.value);
-  if(!res){ tOut.innerHTML="—"; tMeta.textContent=""; lastPlain=""; return; }
+  if(!res){ tOut.innerHTML="—"; tMeta.textContent=""; return; }
   tOut.innerHTML = res.html;
-  lastPlain = res.plain;
   tMeta.textContent = res.mode + (res.unknownCount ? ` · ${res.unknownCount} word${res.unknownCount>1?"s":""} not in dictionary` : "");
 }
 tGo.addEventListener("click", runTranslate);
 tIn.addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); runTranslate(); } });
-
-/* ---------- VOICE INPUT (speech-to-text) ---------- */
-const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition = null;
-if(SpeechRecognitionImpl){
-  recognition = new SpeechRecognitionImpl();
-  recognition.lang = "en-IN";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-  recognition.onresult = e=>{ tIn.value = e.results[0][0].transcript; runTranslate(); };
-  recognition.onend = ()=>{ micBtn.classList.remove("listening"); micBtn.textContent="🎤 Speak"; };
-  recognition.onerror = ()=>{ micBtn.classList.remove("listening"); micBtn.textContent="🎤 Speak"; };
-  micBtn.addEventListener("click", ()=>{
-    micBtn.classList.add("listening");
-    micBtn.textContent="● Listening…";
-    recognition.start();
-  });
-} else {
-  micBtn.disabled = true;
-  micBtn.title = "Voice input isn't supported in this browser — try Chrome on desktop or Android.";
-}
-
-/* ---------- VOICE OUTPUT (text-to-speech) ---------- */
-const synth = window.speechSynthesis;
-if(synth){
-  speakBtn.addEventListener("click", ()=>{
-    if(!lastPlain) return;
-    synth.cancel();
-    const u = new SpeechSynthesisUtterance(lastPlain);
-    const voices = synth.getVoices();
-    const pref = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("kn"))
-      || voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("hi"))
-      || voices.find(v=>v.lang && v.lang.toLowerCase().startsWith("en-in"))
-      || null;
-    if(pref) u.voice = pref;
-    u.rate = 0.9;
-    synth.speak(u);
-  });
-} else {
-  speakBtn.disabled = true;
-  speakBtn.title = "Speech output isn't supported in this browser.";
-}
 
 /* ---------- TABS ---------- */
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
