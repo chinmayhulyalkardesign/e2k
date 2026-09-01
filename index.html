@@ -138,12 +138,15 @@ const DICT = [
   ["I want","nanage bEku","word"],["Don't want","bEDa","word"],
   ["Like / love","ishta","word"],["Don't like","ishtilla","word"],
   ["-s (make plural)","…gaLu","word"],["is / there is (hai)","ide","word"],
-  ["How much","eshTu","word"],
+  ["How much","eshTu","word"],["Or","Athva","word"],
   // numbers
   ["10","hattu","number"],["20","ipattu","number"],["30","moovattu","number"],
   ["40","naalvattu","number"],["50","aivattu","number"],["60","aravattu","number"],
   ["70","epattu","number"],["80","embattu","number"],["90","tombattu","number"],
   ["100","nooru","number"],["1000","saavira","number"],["2000","eradu saavira","number"],
+  // quantities (kilo)
+  ["Quarter kilo","Kaalu kilo","quantity"],["Half kilo","Ardha kilo","quantity"],
+  ["Three-quarter kilo","Mukkalu kilo","quantity"],["One kilo","Ondu kilo","quantity"],
   // directions
   ["Left","eDa","direction"],["Right","Bala","direction"],["Straight","nEra","direction"],
   ["Back","hinde","direction"],["Front","munde","direction"],["Up / above","mEle","direction"],
@@ -182,9 +185,9 @@ const PHRASES = [
 ];
 PHRASES.forEach(p=>DICT.push([p[0],p[1],"phrase"]));
 
-const CATS = ["all","greetings","pronoun","time","word","number","direction","question","verb","phrase"];
+const CATS = ["all","greetings","pronoun","time","word","number","quantity","direction","question","verb","phrase"];
 const CATLABEL = {all:"All",greetings:"Greetings",pronoun:"Pronouns",time:"Time",word:"Common",
-  number:"Numbers",direction:"Directions",question:"Questions",verb:"Verbs",phrase:"Phrases"};
+  number:"Numbers",quantity:"Quantities",direction:"Directions",question:"Questions",verb:"Verbs",phrase:"Phrases"};
 
 /* ---------- DICTIONARY UI ---------- */
 let activeCat="all";
