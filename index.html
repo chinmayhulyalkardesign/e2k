@@ -124,6 +124,7 @@ const DICT = [
   ["He","Avanu","pronoun"],["She","AvaLu","pronoun"],["His","avana","pronoun"],
   ["Her","avaLa","pronoun"],["They","avaru","pronoun"],["Their","avara","pronoun"],
   ["Them","avarige","pronoun"],["This / It","Idu","pronoun"],["That","Adu","pronoun"],
+  ["To him","avanige","pronoun"],["To her","AvaLige","pronoun"],
   // time
   ["Today","Ivattu","time"],["Tomorrow","NaaLe","time"],["Yesterday","nenne","time"],
   ["Day after","naaLiddu","time"],["Day before","monne","time"],["Time","gante / samaya","time"],
@@ -132,21 +133,40 @@ const DICT = [
   ["Give","koDi","word"],["Do","madi","word"],["Go","hoGi","word"],["Come","Banni","word"],
   ["Meal / food","Oota","word"],["Done?","Aaita? / Aitu","word"],["Breakfast","Tindi","word"],
   ["Vegetables","Tarkari / TarkarigaLu","word"],["Milk","HaaLu","word"],
-  ["Sweet","SeeHi","word"],["Sweet dish","SeeHi Tindi","word"],["Shirt","anGI","word"],
+  ["Sweet","SeeHi / sihi","word"],["Sweet dish","SeeHi Tindi","word"],["Shirt","anGI","word"],
   ["Rain","maLe","word"],["Near","Hattira","word"],["Far","Doora","word"],
   ["Water","neeru / neeRa","word"],["Pen","pen","word"],
   ["I want","nanage bEku","word"],["Don't want","bEDa","word"],
   ["Like / love","ishta","word"],["Don't like","ishtilla","word"],
   ["-s (make plural)","…gaLu","word"],["is / there is (hai)","ide","word"],
   ["How much","eshTu","word"],["Or","Athva","word"],
+  ["Work","KeLsa","word"],["Doing","maaDutta","word"],["Giving","kodiyutta","word"],
+  ["Eating","tinnutta","word"],["Drinking","kuDiyutta","word"],["Waiting","kaayutta","word"],
+  ["Son / dude (casual)","maga","word"],["Dress / clothes","baTTe","word"],["Book","pustaka","word"],
+  ["And","matte","word"],["No / not there","illa","word"],["Quickly / fast","BeGa","word"],
+  ["A little / somewhat","swalpa","word"],["Good / nice (it's good)","changide","word"],
+  ["Very / a lot","tumba","word"],["All / everything","ella","word"],["Enough","saaku","word"],
+  ["Not available / won't get","sigolla","word"],["Only / that's all","ashte","word"],
+  ["Tiredness","sushtu","word"],["Different / another","bere","word"],["Minutes","nimsha","word"],
+  ["Brother / sir (address)","Anna","word"],["Total (how much)","eshTayTu","word"],
   // numbers
-  ["10","hattu","number"],["20","ipattu","number"],["30","moovattu","number"],
+  ["5","aidu","number"],["10","hattu","number"],["20","ipattu","number"],["30","moovattu","number"],
   ["40","naalvattu","number"],["50","aivattu","number"],["60","aravattu","number"],
   ["70","epattu","number"],["80","embattu","number"],["90","tombattu","number"],
-  ["100","nooru","number"],["1000","saavira","number"],["2000","eradu saavira","number"],
-  // quantities (kilo)
+  ["100","nooru","number"],["200","Innoru","number"],["300","Munnoru","number"],
+  ["400","nannooru","number"],["500","ainooru","number"],["600","Aarnooru","number"],
+  ["700","eLnooru","number"],["800","enTnooru","number"],["900","Ombainooru","number"],
+  ["1000","saavira","number"],["2000","eradu saavira","number"],
+  // quantities (kilo / market)
   ["Quarter kilo","Kaalu kilo","quantity"],["Half kilo","Ardha kilo","quantity"],
   ["Three-quarter kilo","Mukkalu kilo","quantity"],["One kilo","Ondu kilo","quantity"],
+  ["Rupee","Rupayi","quantity"],
+  // food & market
+  ["Onion","eruLLi","food"],["Green chilly","hasiru menasinakayi","food"],
+  ["Brinjal / eggplant","Badanakeyi","food"],["Okra / ladies finger","benDekaayi","food"],
+  ["Potato","aaluGaDDe","food"],["Garlic","beLLuLLi","food"],
+  ["Bitter gourd","Haagalakaayi","food"],["Radish","mulangi","food"],
+  ["Coriander / cilantro","kottambiri","food"],
   // directions
   ["Left","eDa","direction"],["Right","Bala","direction"],["Straight","nEra","direction"],
   ["Back","hinde","direction"],["Front","munde","direction"],["Up / above","mEle","direction"],
@@ -158,6 +178,7 @@ const DICT = [
   ["How","hEge","question"],["What","Enu","question"],["Where","elli","question"],
   ["When","yaavaga","question"],["Why","yaake","question"],["Which","yaava","question"],
   ["Who","yaaru","question"],["Whose","yaara","question"],["Whom","yaarana","question"],
+  ["To where","Yellige","question"],
   // verbs (roots)
   ["Sing","HaaDu","verb"],["Play","Aadu","verb"],["Give (root)","KoDu","verb"],
   ["Take","Tego / tago","verb"],["Drink","KuDi","verb"],["Walk","Nadi","verb"],
@@ -166,7 +187,19 @@ const DICT = [
   ["Bother","KaaDu","verb"],["See","noDu","verb"],["Sleep","Malagu","verb"],
   ["Wake up","ELu","verb"],["Close","Muchchu","verb"],["Open","Tere","verb"],
   ["Write","Bare / Bari","verb"],["Call / Invite","Kari","verb"],
+  ["Wait","Kaayu","verb"],["Stand / stop","Nillu","verb"],["Read / study","Odu","verb"],
+  ["Happen / become","Agu","verb"],
 ];
+
+/* casual expressions */
+const EXPRESSIONS = [
+  ["Really?","NiJwaaglu"],["Is it? / really?","Howdaa"],["Yes","Howdu"],
+  ["Oh my god","Ayyo devre"],["Okay / alright","Sari"],
+  ["That's okay / never mind","Parvagilla"],["Please","dayavittu"],
+  ["So sad / what a shame","Ayya che"],["Nothing like that","Haagenilla"],
+  ["I am great","naan sakkataagidini"],
+];
+EXPRESSIONS.forEach(e=>DICT.push([e[0],e[1],"expression"]));
 
 /* phrases live in the dictionary too, under 'phrase' */
 const PHRASES = [
@@ -183,12 +216,24 @@ const PHRASES = [
   ["Where do you work?","Neevu elli keLsa maaDutteera?"],
   ["There is a pen (over there)","Alli onDu pen ide"],
   ["I have a pen","Nanna hattira onDu pen ide"],
+  ["Your name","Ninna hesaru"],
+  ["This is your pen","Idu ninna pen"],
+  ["The pen is yours","ee pen ninnadu"],
+  ["Which is that","Adu yaava?"],
+  ["I am Chinmay","Naanu Chinmay"],
+  ["I know a little Kannada","Nanu swalpa kannada gottu"],
+  ["I am working","Naanu keLsa maaDutta iddEne"],
+  ["I was working","Naanu keLsa maaDutta idde"],
+  ["Is there onion?","eruLLi idiya?"],
+  ["What happened?","Yenu Aitu?"],
+  ["Nothing","Enu illa"],
 ];
 PHRASES.forEach(p=>DICT.push([p[0],p[1],"phrase"]));
 
-const CATS = ["all","greetings","pronoun","time","word","number","quantity","direction","question","verb","phrase"];
+const CATS = ["all","greetings","pronoun","time","word","number","quantity","food","direction","question","verb","expression","phrase"];
 const CATLABEL = {all:"All",greetings:"Greetings",pronoun:"Pronouns",time:"Time",word:"Common",
-  number:"Numbers",quantity:"Quantities",direction:"Directions",question:"Questions",verb:"Verbs",phrase:"Phrases"};
+  number:"Numbers",quantity:"Quantities",food:"Food & Market",direction:"Directions",question:"Questions",
+  verb:"Verbs",expression:"Expressions",phrase:"Phrases"};
 
 /* ---------- DICTIONARY UI ---------- */
 let activeCat="all";
@@ -290,13 +335,18 @@ const FRAMES = [
   {re:/^i\s+have\s+(?:a\s+|an\s+|one\s+)?(.+?)[.!]?$/i, tmpl:o=>[`Nanna hattira onDu ${o.html} ide`, `Nanna hattira onDu ${o.plain} ide`]},
   {re:/^(?:there\s+is|there's)\s+(?:a\s+|an\s+|one\s+)?(.+?)[.!]?$/i, tmpl:o=>[`Alli onDu ${o.html} ide`, `Alli onDu ${o.plain} ide`]},
   {re:/^give\s+me\s+(.+?)[.!]?$/i,                tmpl:o=>[`Nanage ${o.html} koDi`, `Nanage ${o.plain} koDi`]},
+  {re:/^give\s+us\s+(.+?)[.!]?$/i,                tmpl:o=>[`Namage ${o.html} koDi`, `Namage ${o.plain} koDi`]},
+  {re:/^give\s+them\s+(.+?)[.!]?$/i,              tmpl:o=>[`Avarige ${o.html} koDi`, `Avarige ${o.plain} koDi`]},
   {re:/^my\s+name\s+is\s+(.+?)[.!]?$/i,           tmpl:o=>[`Nanna hesaru ${o.html}`, `Nanna hesaru ${o.plain}`]},
   {re:/^i\s+work\s+(?:in|at)\s+(.+?)[.!]?$/i,     tmpl:o=>[`Naanu ${o.html}-alli keLsa maaDuttEne`, `Naanu ${o.plain}-alli keLsa maaDuttEne`]},
   {re:/^we\s+don'?t\s+like\s+(.+?)[.!]?$/i,       tmpl:o=>[`Namage ${o.html} ishtilla`, `Namage ${o.plain} ishtilla`]},
+  {re:/^we\s+don'?t\s+want\s+(.+?)[.!]?$/i,       tmpl:o=>[`Namage ${o.html} bEDa`, `Namage ${o.plain} bEDa`]},
   {re:/^we\s+like\s+(.+?)[.!]?$/i,                tmpl:o=>[`Namage ${o.html} ishta`, `Namage ${o.plain} ishta`]},
   {re:/^we\s+want\s+(.+?)[.!]?$/i,                tmpl:o=>[`Namage ${o.html} bEku`, `Namage ${o.plain} bEku`]},
   {re:/^you\s+don'?t\s+want\s+(.+?)[.!]?$/i,      tmpl:o=>[`Nimage ${o.html} bEDa`, `Nimage ${o.plain} bEDa`]},
+  {re:/^you\s+don'?t\s+like\s+(.+?)[.!]?$/i,      tmpl:o=>[`Nimage ${o.html} ishtilla`, `Nimage ${o.plain} ishtilla`]},
   {re:/^you\s+want\s+(.+?)[.!]?$/i,               tmpl:o=>[`Nimage ${o.html} bEku`, `Nimage ${o.plain} bEku`]},
+  {re:/^you\s+like\s+(.+?)[.!]?$/i,               tmpl:o=>[`Nimage ${o.html} ishta`, `Nimage ${o.plain} ishta`]},
 ];
 
 function translateSentence(input){
