@@ -124,18 +124,22 @@ const DICT = [
   ["He","Avanu","pronoun"],["She","AvaLu","pronoun"],["His","avana","pronoun"],
   ["Her","avaLa","pronoun"],["They","avaru","pronoun"],["Their","avara","pronoun"],
   ["Them","avarige","pronoun"],["This / It","Idu","pronoun"],["That","Adu","pronoun"],
-  ["To him","avanige","pronoun"],["To her","AvaLige","pronoun"],
+  ["To him","avanige","pronoun"],["To her","AvaLige","pronoun"],["This (adjective)","ee","pronoun"],
   // time
   ["Today","Ivattu","time"],["Tomorrow","NaaLe","time"],["Yesterday","nenne","time"],
   ["Day after","naaLiddu","time"],["Day before","monne","time"],["Time","gante / samaya","time"],
   ["Morning","beLigge","time"],["Afternoon","madhyana","time"],["Evening","sanje","time"],
+  ["Month","tingaLu","time"],["Last month","hindina tingaLu","time"],["This month","ee tingaLu","time"],
+  ["Last week","hindina vaara","time"],
   // common words
   ["Give","koDi","word"],["Do","madi","word"],["Go","hoGi","word"],["Come","Banni","word"],
   ["Meal / food","Oota","word"],["Done?","Aaita? / Aitu","word"],["Breakfast","Tindi","word"],
   ["Vegetables","Tarkari / TarkarigaLu","word"],["Milk","HaaLu","word"],
   ["Sweet","SeeHi / sihi","word"],["Sweet dish","SeeHi Tindi","word"],["Shirt","anGI","word"],
   ["Rain","maLe","word"],["Near","Hattira","word"],["Far","Doora","word"],
-  ["Water","neeru / neeRa","word"],["Pen","pen","word"],
+  ["Water","neeru / neeRa","word"],["Pen","pen","word"],["Window","kiTaki","word"],
+  ["Money","duDDu","word"],["So / therefore","adikke","word"],["Then / if so","haagidre","word"],
+  ["From","inda","word"],
   ["I want","nanage bEku","word"],["Don't want","bEDa","word"],
   ["Like / love","ishta","word"],["Don't like","ishtilla","word"],
   ["-s (make plural)","…gaLu","word"],["is / there is (hai)","ide","word"],
@@ -227,6 +231,10 @@ const PHRASES = [
   ["Is there onion?","eruLLi idiya?"],
   ["What happened?","Yenu Aitu?"],
   ["Nothing","Enu illa"],
+  ["You didn't clean the window","Neevu kiTaki clean maaDilla"],
+  ["I have done it last week","Naanu hindina vaara maaDidde"],
+  ["Last month I gave you money, so this month I won't pay you","Naanu ninge hindina tingaLu duDDu koTTidde, adikke ee tingaLu duDDu koDalla!"],
+  ["Then I won't come from tomorrow","haagidre naale inda naanu baralla!"],
 ];
 PHRASES.forEach(p=>DICT.push([p[0],p[1],"phrase"]));
 
