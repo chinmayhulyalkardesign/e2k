@@ -147,7 +147,7 @@ const DICT = [
   ["Work","KeLsa","word"],["Doing","maaDutta","word"],["Giving","kodiyutta","word"],
   ["Eating","tinnutta","word"],["Drinking","kuDiyutta","word"],["Waiting","kaayutta","word"],
   ["Son / dude (casual)","maga","word"],["Dress / clothes","baTTe","word"],["Book","pustaka","word"],
-  ["And","matte","word"],["No / not there","illa","word"],["Quickly / fast","BeGa","word"],
+  ["And / then / again / later","matte","word"],["No / not there","illa","word"],["Quickly / fast","BeGa","word"],
   ["A little / somewhat","swalpa","word"],["Good / nice (it's good)","changide","word"],
   ["Very / a lot","tumba","word"],["All / everything","ella","word"],["Enough","saaku","word"],
   ["Not available / won't get","sigolla","word"],["Only / that's all","ashte","word"],
@@ -182,7 +182,8 @@ const DICT = [
   ["How","hEge","question"],["What","Enu","question"],["Where","elli","question"],
   ["When","yaavaga","question"],["Why","yaake","question"],["Which","yaava","question"],
   ["Who","yaaru","question"],["Whose","yaara","question"],["Whom","yaarana","question"],
-  ["To where","Yellige","question"],
+  ["To where","Yellige","question"],["To here","Illige","question"],
+  ["How long / how much time","eshTu hottu","question"],
   // verbs (roots)
   ["Sing","HaaDu","verb"],["Play","Aadu","verb"],["Give (root)","KoDu","verb"],
   ["Take","Tego / tago","verb"],["Drink","KuDi","verb"],["Walk","Nadi","verb"],
@@ -192,7 +193,7 @@ const DICT = [
   ["Wake up","ELu","verb"],["Close","Muchchu","verb"],["Open","Tere","verb"],
   ["Write","Bare / Bari","verb"],["Call / Invite","Kari","verb"],
   ["Wait","Kaayu","verb"],["Stand / stop","Nillu","verb"],["Read / study","Odu","verb"],
-  ["Happen / become","Agu","verb"],
+  ["Happen / become","Agu","verb"],["Show","tOrisu","verb"],
 ];
 
 /* casual expressions */
@@ -235,6 +236,19 @@ const PHRASES = [
   ["I have done it last week","Naanu hindina vaara maaDidde"],
   ["Last month I gave you money, so this month I won't pay you","Naanu ninge hindina tingaLu duDDu koTTidde, adikke ee tingaLu duDDu koDalla!"],
   ["Then I won't come from tomorrow","haagidre naale inda naanu baralla!"],
+  ["Pay 200 rupees","Innooru rupaayee kodi"],
+  ["Why? Meter shows 160","Yake? meter noora arvatthu torstide!!"],
+  ["You have a luggage, that's why","Nim hatra luggage ide, adakke!!"],
+  ["No, I will not pay extra","Illa, naanu extra kodalla."],
+  ["Sir, where are you?","Sir Elliddeera?"],
+  ["I am near the temple","Naanu temple hathra ideeni"],
+  ["How long will you take to reach here?","Illige Barokke innu eshT-hotthu aagutthe?"],
+  ["Come soon","BeGa banni"],
+  ["What's the fare?","EshTaaythu?"],
+  ["I won't come again","Naanu matte baralla"],
+  ["I will come later / again","Mathe baruve"],
+  ["How are you? (casual)","hegidira?"],
+  ["I'm fine","chanagidini"],
 ];
 PHRASES.forEach(p=>DICT.push([p[0],p[1],"phrase"]));
 
